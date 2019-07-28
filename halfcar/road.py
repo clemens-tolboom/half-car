@@ -40,8 +40,8 @@ class Road:
         num_points = int(length * resolution)
 
         if x_min == None:
-            x_min = 0
-        x_max = x_min + length
+            x_min = -length / 2
+        x_max = length / 2
 
         # x coordinates will not change. Store y coordinates in deque.
         self.x_coords = np.linspace(x_min, x_max, num_points)

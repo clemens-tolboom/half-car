@@ -1,4 +1,4 @@
-from halfcar import Car, PlotSim
+from halfcar import Car, Road, PlotSim
 
 
 def simulate(car, time_step=0.0002, interval=1):
@@ -43,7 +43,8 @@ def simulate(car, time_step=0.0002, interval=1):
 
 
 if __name__ == "__main__":
-    car = Car()
+    road = Road(length= 6, mode="square")
+    car = Car(road_func=road)
     time_step = 0.0005
     interval = 100
     generator = simulate(car, time_step=time_step, interval=interval)
