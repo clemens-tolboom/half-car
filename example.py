@@ -44,22 +44,41 @@ def simulate(car, time_step=0.0002, interval=1):
 
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser()
+    mode_defaults = {
+        "square": {
+            "amplitude": 0.03,
+            "frequency": 0.1
+        },
+        "sine": {
+            "amplitude": 0.3,
+            "frequency": 0.04
+        },
+        "triangle": {
+            "amplitude": 0.05,
+            "frequency": 1.8
+        },
+        "bump": {
+            "amplitude": 0.05,
+            "frequency": 1.8
+        }
+    }
+
+    argparser = argparse.ArgumentParser(usage='%(prog)s [options]\nWe have some defaults depending on --mode. ' + str(mode_defaults))
     argparser.add_argument("--mode", "-m", type=str, default="sine",
-        help="Road profile mode: 'flat', 'sine' (default), 'square', "\
-                "'triangle', 'bump'"
+        choices=['flat', 'sine', 'square', 'triangle', 'bump'],
+        help="Road profile mode: (default: %(default)s)"
     )
     argparser.add_argument("--amplitude", "-a", type=float,
-        help="Amplitude (in meters) for sine, square, triangle, and bump modes"
+        help="Amplitude (in meters) for given '--mode'"
     )
     argparser.add_argument("--frequency", "-f", type=float,
-        help="Frequency for sine, square, triangle, and bump modes"
+        help="Frequency for given '--mode'"
     )
     argparser.add_argument("--time-step", "-t", type=float, default=0.0005,
-        help="Simulation time step in seconds (default 0.0005)"
+        help="Simulation time step in seconds (default: %(default)s)"
     )
     argparser.add_argument("--interval", "-i", type=int, default=100,
-        help="Draw animation frame every <interval> time steps (default 100)"
+        help="Draw animation frame every <interval> time steps  (default: %(default)s)"
     )
     argparser.add_argument("--write", "-w", action="store_true",
         help="Write resulting animation to a video file"
@@ -77,16 +96,10 @@ if __name__ == "__main__":
         "length": 6
     }
 
-    # Select reasonable default `Road` settings for the various modes.
-    if args["mode"] == "square":
-        road_args["amplitude"] = args.get("amplitude", 0.03)
-        road_args["frequency"] = args.get("frequency", 0.1)
-    elif args["mode"] == "sine":
-        road_args["amplitude"] = args.get("amplitude", 0.3)
-        road_args["frequency"] = args.get("frequency", 0.04)
-    elif args["mode"] in ("triangle", "bump"):
-        road_args["amplitude"] = args.get("amplitude", 0.05)
-        road_args["frequency"] = args.get("frequency", 1.8)
+    # Apply `mode_defaults` for `Road` settings.
+    if args["mode"] in ("sine", "square", "triangle", "bump"):
+        road_args["amplitude"] = args.get("amplitude", mode_defaults[args["mode"]]["amplitude"])
+        road_args["frequency"] = args.get("frequency", mode_defaults[args["mode"]]["frequency"])
 
     # Instantiate `Road` and `Car` objects, passing the `Road` object to the
     # `Car` constructor. Note that, if no road object is passed to the `Car`
